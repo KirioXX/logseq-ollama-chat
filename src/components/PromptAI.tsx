@@ -1,14 +1,14 @@
 import React, { KeyboardEventHandler, useEffect, useState } from 'react'
-import { askAI, askWithContext, defineWord } from '../ollama';
 import { Input } from '@/components/ui/input';
+import { askAI, askWithContext, defineWord } from '@/ollama/commands/ask-ai';
 
 export const PromptAI = ({ type, theme }: { type: string, theme: string }) => {
-
   const placeholder = type.startsWith('ask') ? "Prompt..." : "Define..."
   const [inputValue, setInputValue] = useState('');
   const [hitEnter, setHitEnter] = useState(false)
 
   useEffect(() => {
+
     if (hitEnter) {
       logseq.hideMainUI()
       if (type === 'ask ai') {
