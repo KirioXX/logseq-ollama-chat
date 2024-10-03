@@ -1,6 +1,8 @@
 import React, { KeyboardEventHandler, useEffect, useState } from 'react'
 import { Input } from '@/components/ui/input';
-import { askAI, askWithContext, defineWord } from '@/ollama/commands/ask-ai';
+import { askAI } from '@/ollama/commands/ask-ai';
+import { defineWord } from '@/ollama/commands/defineWord';
+import { askAIWithContext } from '@/ollama/commands/askAIWithContext';
 
 export const PromptAI = ({ type, theme }: { type: string, theme: string }) => {
   const placeholder = type.startsWith('ask') ? "Prompt..." : "Define..."
@@ -16,9 +18,9 @@ export const PromptAI = ({ type, theme }: { type: string, theme: string }) => {
       } else if (type === 'define') {
         defineWord(inputValue)
       } else if (type === 'ask with page context') {
-        askWithContext(inputValue, 'page')
+        askAIWithContext(inputValue, 'page')
       } else if (type === 'ask with block context') {
-        askWithContext(inputValue, 'block')
+        askAIWithContext(inputValue, 'block')
       }
     }
   }, [hitEnter])
