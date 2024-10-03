@@ -41,7 +41,7 @@ function App() {
           }
         }}
       >
-        <div ref={innerRef} className="flex items-center justify-center w-screen">
+        <div ref={innerRef} className="flex items-center justify-center w-3/4">
           <OllamaCommandPallete options={options} theme={theme} />
         </div>
       </main>

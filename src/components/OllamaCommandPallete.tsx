@@ -68,7 +68,7 @@ export function OllamaCommandPallete({ options, theme }: { options: string[], th
 
   return (
       <Command
-        className={(theme === 'dark' ? "dark dark:bg-gray-900" : "bg-gray-200") + " rounded-lg border shadow-md w-1/2"}>
+        className={(theme === 'dark' ? "dark dark:bg-gray-900" : "bg-gray-200") + " rounded-lg border shadow-md"}>
         <CommandInput className="ai-input" placeholder="Type a command or search..." />
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>

@@ -12,7 +12,7 @@ export const PromptAI = ({ type, theme }: { type: string, theme: string }) => {
     if (hitEnter) {
       logseq.hideMainUI()
       if (type === 'ask ai') {
-        askAI(inputValue, "")
+        askAI(inputValue)
       } else if (type === 'define') {
         defineWord(inputValue)
       } else if (type === 'ask with page context') {
@@ -33,19 +33,20 @@ export const PromptAI = ({ type, theme }: { type: string, theme: string }) => {
       setHitEnter(true)
     }
   }
+
+  if (hitEnter) {
+    return null
+  }
+
   return (
-    !hitEnter ? (
-      <div className='w-screen text-center'>
-        <Input
-          autoFocus
-          type="text"
-          placeholder={placeholder}
-          value={inputValue}
-          onChange={handleInputChange}
-          onKeyDown={handleKeyDown}
-          className={(theme === 'dark' ? "dark text-white dark:bg-gray-800" : "text-black bg-gray-200") + "px-2 py-1 rounded-md inline-block w-3/4"}
-        />
-      </div>
-    ) : null
+    <Input
+      autoFocus
+      type="text"
+      placeholder={placeholder}
+      value={inputValue}
+      onChange={handleInputChange}
+      onKeyDown={handleKeyDown}
+      className={(theme === 'dark' ? "dark text-white dark:bg-gray-800" : "text-black bg-gray-200") + "px-2 py-1 rounded-md inline-block"}
+    />
   )
 }

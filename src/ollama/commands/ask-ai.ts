@@ -1,38 +1,55 @@
+import { BlockIdentity } from "@logseq/libs/dist/LSPlugin";
 import { ContextType, getTreeContent } from "../../lib/logseq-helpers";
 import { delay } from "../../lib/utils";
 import { ollamaGenerate } from "../ollama";
 
-export async function askAI(prompt: string, context: string) {
+export async function askAI(
+  prompt: string,
+  context?: string,
+  blockId?: BlockIdentity
+) {
   await delay(300);
   try {
-    const currentBlock = await logseq.Editor.getCurrentBlock();
-    let block = null;
-    if (currentBlock?.content.trim() === "") {
-      block = await logseq.Editor.insertBlock(
-        currentBlock!.uuid,
-        "⌛Generating....",
-        { before: true }
-      );
+    let currentBlock;
+    if (blockId) {
+      await logseq.Editor.insertBlock(blockId, "⌛Generating....", {
+        before: false,
+      });
     } else {
-      block = await logseq.Editor.insertBlock(
-        currentBlock!.uuid,
-        "⌛Generating....",
-        { before: false }
+      // Get a new block on the current page or journal if no blockId is provided
+      const currentPage = await logseq.Editor.getCurrentPage();
+      const currentJournal = await logseq.Editor.getCurrentJournal();
+      console.log({ currentPage });
+      if (!currentPage && !currentJournal) {
+        return;
+      }
+      currentBlock = await logseq.Editor.appendBlockInPage(
+        currentPage ?? currentJournal,
+        "⌛Generating...."
       );
     }
+
     let response: string | undefined;
-    if (context == "") {
+    if (!context) {
       response = await ollamaGenerate(prompt);
     } else {
       response = await ollamaGenerate(
         `With the context of: ${context}, ${prompt}`
       );
     }
-    await logseq.Editor.updateBlock(
-      block!.uuid,
-      `**USER**: ${prompt}
+    if (blockId) {
+      await logseq.Editor.updateBlock(
+        blockId,
+        `**USER**: ${prompt}
 **AI**: ${response}`
-    );
+      );
+    } else if (currentBlock) {
+      await logseq.Editor.updateBlock(
+        currentBlock.uuid,
+        `**USER**: ${prompt}
+**AI**: ${response}`
+      );
+    }
   } catch (e: any) {
     logseq.UI.showMsg(e.toString(), "warning");
     console.error(e);
