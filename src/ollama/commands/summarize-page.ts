@@ -1,9 +1,7 @@
-import { delay } from "@/lib/utils";
-import { ollamaGenerate } from "../ollama";
-import { prompts } from "../../lib/prompts";
+import { getAllPrompts } from "@/prompts/getAllPrompts";
+import { OllamaService } from "@/core/service/OllamaService";
 
 export async function summarizePage() {
-  await delay(300);
   try {
     const currentSelectedBlocks =
       await logseq.Editor.getCurrentPageBlocksTree();
@@ -19,7 +17,17 @@ export async function summarizePage() {
         "⌛ Summarizing Page....",
         { before: true }
       );
-      const summary = await ollamaGenerate(prompts.summarise(blocksContent));
+
+      const prompt = (await getAllPrompts()).find((p) => p.id === "summarize");
+      if (!prompt) {
+        logseq.UI.showMsg("No prompt found", "error");
+        return;
+      }
+
+      const summary = await OllamaService.Instance?.chat({
+        prompt,
+        invokeState: { selectedBlocks: [lastBlock] },
+      });
       await logseq.Editor.updateBlock(lastBlock.uuid, `Summary: ${summary}`);
     }
   } catch (e: any) {

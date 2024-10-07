@@ -1,34 +1,25 @@
-import { convertToFlashCardFromEvent } from "./ollama/commands/convert-to-flash-card";
-import { DivideTaskIntoSubTasksFromEvent } from "./ollama/commands/device-task-into-sub-tasks";
-import { promptFromBlockEventClosure } from "./ollama/ollama";
+import { convertToFlashCardHandler } from "./ollama/commands/convert-to-flash-card";
+import { DivideTaskIntoSubTasksHandler } from "./ollama/commands/device-task-into-sub-tasks";
+import { expandBlock } from "./ollama/commands/expand-block";
+import { summarizeBlock } from "./ollama/commands/summarize-block";
 
 export namespace ContextMenu {
   export function init() {
     logseq.Editor.registerBlockContextMenuItem(
       "Ollama: Create a flash card",
-      convertToFlashCardFromEvent
+      convertToFlashCardHandler
     );
     logseq.Editor.registerBlockContextMenuItem(
       "Ollama: Divide into subtasks",
-      DivideTaskIntoSubTasksFromEvent
+      DivideTaskIntoSubTasksHandler
     );
     logseq.Editor.registerBlockContextMenuItem(
-      "Ollama: Prompt from Block",
-      promptFromBlockEventClosure()
-    );
-    logseq.Editor.registerBlockContextMenuItem(
-      "Ollama: Custom prompt on Block",
-      promptFromBlockEventClosure(
-        logseq?.settings?.custom_prompt_block as string | undefined
-      )
-    );
-    logseq.Editor.registerBlockContextMenuItem(
-      "Ollama: Summarize block",
-      promptFromBlockEventClosure("Summarize: ")
+      "Ollama: Summarize Block",
+      summarizeBlock
     );
     logseq.Editor.registerBlockContextMenuItem(
       "Ollama: Expand Block",
-      promptFromBlockEventClosure("Expand: ")
+      expandBlock
     );
   }
 }

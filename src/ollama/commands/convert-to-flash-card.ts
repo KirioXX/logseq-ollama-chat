@@ -1,44 +1,37 @@
-import { IHookEvent } from "@logseq/libs/dist/LSPlugin";
-import { delay } from "../../lib/utils";
-import { ollamaGenerate } from "../ollama";
+import { BlockUUID, IHookEvent } from "@logseq/libs/dist/LSPlugin";
+import { Prompt } from "@/types/Prompt";
+import { getAllPrompts } from "@/prompts/getAllPrompts";
+import { OllamaService } from "@/core/service/OllamaService";
 
-export async function convertToFlashCard(uuid: string, blockContent: string) {
+export async function convertToFlashCard(uuid: string, prompt: Prompt) {
   try {
-    const questionBlock = await logseq.Editor.insertBlock(
+    const answerBlock = await logseq.Editor.insertBlock(
       uuid,
       "⌛Genearting question....",
       { before: false }
     );
-    const answerBlock = await logseq.Editor.insertBlock(
-      questionBlock!.uuid,
-      "⌛Genearting answer....",
-      { before: false }
-    );
-    const question = await ollamaGenerate(
-      `Create a question for a flashcard. Provide the question only. Here is the knowledge to check:\n ${blockContent}`
-    );
-    const answer = await ollamaGenerate(
-      `Given the question ${question} and the context of ${blockContent} What is the answer? be as brief as possible and provide the answer only.`
-    );
-    if (!question || !answer) {
+    const respond = await OllamaService.Instance?.chat({
+      prompt,
+    });
+    if (!respond) {
       return;
     }
-
-    await logseq.Editor.updateBlock(questionBlock!.uuid, `${question} #card`);
-    await delay(300);
-    await logseq.Editor.updateBlock(answerBlock!.uuid, answer);
+    await logseq.Editor.updateBlock(answerBlock!.uuid, respond.content);
   } catch (e: any) {
     logseq.UI.showMsg(e.toString(), "warning");
     console.error(e);
   }
 }
 
-export async function convertToFlashCardFromEvent(b: IHookEvent) {
-  const currentBlock = await logseq.Editor.getBlock(b.uuid);
-  await convertToFlashCard(currentBlock!.uuid, currentBlock!.content);
-}
-
-export async function convertToFlashCardCurrentBlock() {
-  const currentBlock = await logseq.Editor.getCurrentBlock();
-  await convertToFlashCard(currentBlock!.uuid, currentBlock!.content);
+export async function convertToFlashCardHandler(
+  prop: IHookEvent & {
+    uuid: BlockUUID;
+  }
+) {
+  const prompt = (await getAllPrompts()).find((p) => p.group === "flashcard");
+  if (!prompt) {
+    logseq.UI.showMsg("No prompt found", "error");
+    return;
+  }
+  await convertToFlashCard(prop.uuid, prompt);
 }

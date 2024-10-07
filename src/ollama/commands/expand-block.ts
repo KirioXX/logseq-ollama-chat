@@ -1,8 +1,8 @@
 import { getAllPrompts } from "@/prompts/getAllPrompts";
 import { OllamaService } from "@/core/service/OllamaService";
-import { BlockUUID, IHookEvent } from "@logseq/libs/dist/LSPlugin";
+import { IHookEvent, BlockUUID } from "@logseq/libs/dist/LSPlugin";
 
-export async function summarizeBlock(prop: IHookEvent & { uuid: BlockUUID }) {
+export async function expandBlock(prop: IHookEvent & { uuid: BlockUUID }) {
   try {
     const currentBlock = await logseq.Editor.getBlock(prop.uuid);
     if (!currentBlock) {
@@ -10,8 +10,8 @@ export async function summarizeBlock(prop: IHookEvent & { uuid: BlockUUID }) {
       return;
     }
 
-    // Get the prompt with the id "summarize"
-    const prompt = (await getAllPrompts()).find((p) => p.id === "summarize");
+    // Get the prompt with the id "elaborate"
+    const prompt = (await getAllPrompts()).find((p) => p.id === "elaborate");
     if (!prompt) {
       logseq.UI.showMsg("No prompt found", "error");
       return;

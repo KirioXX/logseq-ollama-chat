@@ -2,7 +2,7 @@ import { ContextType, getTreeContent } from "@/lib/logseq-helpers";
 import { askAI } from "./ask-ai";
 
 export async function askAIWithContext(
-  prompt: string,
+  userInput: string,
   contextType: ContextType
 ) {
   try {
@@ -16,7 +16,7 @@ export async function askAIWithContext(
       const currentBlock = await logseq.Editor.getCurrentBlock();
       blocksContent += await getTreeContent(currentBlock!);
     }
-    askAI(prompt, `Context: ${blocksContent}`);
+    askAI({ role: "user", content: userInput }, `Context: ${blocksContent}`);
   } catch (e: any) {
     logseq.UI.showMsg(e.toString(), "warning");
     console.error(e);

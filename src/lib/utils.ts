@@ -7,8 +7,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const delay = (t = 100) => new Promise((r) => setTimeout(r, t));
-
 let _visible = logseq.isMainUIVisible;
 
 function subscribeLogseqEvent<T extends LSPluginUserEvents>(

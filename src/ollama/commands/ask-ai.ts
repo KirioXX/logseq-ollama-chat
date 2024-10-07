@@ -1,8 +1,9 @@
 import { BlockIdentity } from "@logseq/libs/dist/LSPlugin";
-import { ollamaGenerate } from "../ollama";
+import { OllamaService } from "@/core/service/OllamaService";
+import { Message } from "ollama/browser";
 
 export async function askAI(
-  prompt: string,
+  message: Message,
   context?: string,
   blockId?: BlockIdentity
 ) {
@@ -10,13 +11,26 @@ export async function askAI(
     const currentBlock = await initTargetBlock(blockId);
 
     // Generate the AI response
-    let response: string | undefined;
+    let response: Message | undefined;
     if (!context) {
-      response = await ollamaGenerate(prompt);
+      response = await OllamaService.Instance.chat({
+        messsages: [message],
+        invokeState: currentBlock
+          ? { selectedBlocks: [currentBlock] }
+          : undefined,
+      });
     } else {
-      response = await ollamaGenerate(
-        `With the context of: ${context}, ${prompt}`
-      );
+      response = await OllamaService.Instance.chat({
+        messsages: [
+          {
+            role: "user",
+            content: `With the context of: ${context}, ${message.content}`,
+          },
+        ],
+        invokeState: currentBlock
+          ? { selectedBlocks: [currentBlock] }
+          : undefined,
+      });
     }
 
     // Update the block with the AI response
