@@ -1,7 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { OllamaCommandPallete } from "./components/OllamaCommandPallete";
 import { useAppVisible } from "./lib/utils";
-import { llmOptions } from "./constants/llmOptions";
 import { Input } from "./components/input";
 import { Message } from "ollama/browser";
 import { ChatBubble } from "./components/ChatBubble";

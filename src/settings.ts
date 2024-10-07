@@ -1,5 +1,4 @@
 import { SettingSchemaDesc } from "@logseq/libs/dist/LSPlugin";
-import { promptFromBlockEventClosure } from "./ollama/ollama";
 
 export const addSettingsToLogseq = async () => {
   const settingsTemplate: SettingSchemaDesc[] = [
