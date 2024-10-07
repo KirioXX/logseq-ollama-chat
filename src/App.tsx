@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useAppVisible } from "./lib/utils";
-import { Input } from "./components/input";
+import { ChatInput } from "./components/ChatInput";
 import { Message } from "ollama/browser";
 import { ChatBubble } from "./components/ChatBubble";
 import { OllamaService } from "./core/service/OllamaService";
@@ -116,22 +116,12 @@ function App() {
             setIsSubmitting(true)
             scrollToBottom()
 
-            const userInput = e.target[0].value
-            setMessages([...messages, { role: 'user', content: userInput }])
-            e.target[0].value = ''
+            const userInput = (document.getElementById('chat') as HTMLTextAreaElement).value;
+            setMessages([...messages, { role: 'user', content: userInput }]);
+            (document.getElementById('chat') as HTMLTextAreaElement).value = '';
           }
           }>
-            <Input
-              autoFocus
-              type="text"
-              id={'chat-input'}
-              className={(
-                theme === 'dark'
-                  ? "dark text-white dark:bg-gray-800"
-                  : "text-black bg-gray-200"
-                ) + "px-2 py-1 mb-2 rounded-md inline-block"
-            }
-            />
+            <ChatInput/>
           </form>
       </div>
     );

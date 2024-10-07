@@ -1,6 +1,7 @@
 import React from "react"
 import { Message } from "ollama/browser";
 import { Loader } from "./Loader";
+import Markdown from 'react-markdown'
 
 
 export const ChatBubble = ({ message, theme, loading, loadingMessage }: { message?: Message, theme: string, loading?: boolean, loadingMessage?: string }) => {
@@ -11,7 +12,10 @@ export const ChatBubble = ({ message, theme, loading, loadingMessage }: { messag
       </div>
     );
   }
-  const content = message.content;
+
+  const content = `${message.role === "user" ? "You" : "🤖 AI"}:
+
+  ${message.content}`;
   return (
     <div
       className={`p-4 rounded-lg max-w-xs ${
@@ -26,10 +30,7 @@ export const ChatBubble = ({ message, theme, loading, loadingMessage }: { messag
           "bg-gray-300 text-black"
       }`}
     >
-      <p>
-        {message.role === "user" ? "You" : "🤖 AI"}:<br/>
-        {message.content}
-      </p>
+      <Markdown>{content}</Markdown>
     </div>
   );
 };

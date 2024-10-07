@@ -1,4 +1,4 @@
-# 🦙 ollama-logseq plugin
+# 🦙 logseq-ollama-chat plugin
 
 A plugin to integrate [ollama](https://github.com/jmorganca/ollama) with [logseq](https://github.com/logseq/logseq)
 
@@ -30,15 +30,15 @@ A plugin to integrate [ollama](https://github.com/jmorganca/ollama) with [logseq
 - Use configuration page `ollama-logseq-config` to add more context manual commands
 
 ## Block Properties
-Ollama offers many different models to choose from for various of tasks. This feature configures model on the per block base and the attribute is also used by its immediate children while using context menu commands for blocks. The properties are named after the [Ollama's generate API](https://github.com/jmorganca/ollama/blob/main/docs/api.md#generate-a-completion) and currently, only the `model` is used. Add the `ollama-generate-model:: model_name` at the end of the block to specify the model to use for the block and its immediate children. 
+Ollama offers many different models to choose from for various of tasks. This feature configures model on the per block base and the attribute is also used by its immediate children while using context menu commands for blocks. The properties are named after the [Ollama's generate API](https://github.com/jmorganca/ollama/blob/main/docs/api.md#generate-a-completion) and currently, only the `model` is used. Add the `ollama-generate-model:: model_name` at the end of the block to specify the model to use for the block and its immediate children.
 ```
-Write a SciFi story of Shanghai 2050. 
+Write a SciFi story of Shanghai 2050.
 ollama-generate-model:: deepseek-llm:7b-chat
 ```
 Currently, three context menu commands would be affected by this properties.
 - Ollama: Prompt from Block
 - Ollama: Summarize Block
-- Ollama: Expand Block 
+- Ollama: Expand Block
 
 ![block-properties](./docs/block-properties.png)
 
@@ -52,7 +52,7 @@ ollama-prompt-prefix:: Extract 10 keywords from the following:
 
 ![config-page](./docs/config-page.png)
 
-Each one of the block with these two properties will create a new context menu command after restarting logseq. The prefix is added in front of the text of the block when the command is invokved on the block. 
+Each one of the block with these two properties will create a new context menu command after restarting logseq. The prefix is added in front of the text of the block when the command is invokved on the block.
 ![contxt-menu](./docs/block-contxt-menu.gif)
 # Demo
 ![demo](./docs/demo.gif)
