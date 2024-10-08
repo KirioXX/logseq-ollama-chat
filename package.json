@@ -50,7 +50,7 @@
     "vite-plugin-logseq": "1.1.2"
   },
   "logseq": {
-    "id": "ollama-logseq",
+    "id": "logseq-ollama-cha",
     "icon": "icon.png"
   }
 }

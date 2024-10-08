@@ -22,7 +22,9 @@ export class Basic {
               DO NOT reply additional statements.
               Keep the conversation going as long as you can.
               Keep the responses relevant to the context of the conversation.
-              Keep the responses short and to the point.`
+              Keep the responses short and to the point.
+              Don't provide any additional information unless asked.
+              Respond to the user's queries in a way that is helpful and informative.`
                 .replaceAll("    ", "")
                 .trim(),
           },

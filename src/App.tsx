@@ -11,8 +11,8 @@ function App() {
   const visible = useAppVisible();
   const [theme, setTheme] = useState<string>('')
   const welcomeMessages = [
-    { role: 'bot', content: 'Hello!' },
-    { role: 'bot', content: 'How can I help you today?' },
+    { role: 'assistant', content: 'Hello!' },
+    { role: 'assistant', content: 'How can I help you today?' },
   ]
   const [messages, setMessages] = useState<Message[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
