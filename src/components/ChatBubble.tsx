@@ -13,7 +13,7 @@ export const ChatBubble = ({ message, theme, loading, loadingMessage }: { messag
     );
   }
 
-  const content = `${message.role === "user" ? "You" : "🤖 AI"}:
+  const content = `${message.role === "user" ? "😊You" : message.role === 'assistant' ? "🤖AI" : '🔨Tool'}:
 
   ${message.content}`;
   return (

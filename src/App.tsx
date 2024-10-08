@@ -69,14 +69,14 @@ function App() {
         if(!response) {
           setMessages([
             ...messages,
-            { role: 'bot', content: 'I am sorry, I could not understand that' }
+            { role: 'assistent', content: 'I am sorry, I could not understand that' }
           ])
           setIsSubmitting(false)
           return
         }
         setMessages([
           ...messages,
-          response!
+          ...response!
         ])
         setIsSubmitting(false)
         scrollToBottom()
@@ -96,7 +96,7 @@ function App() {
             [
               ...welcomeMessages,
               ...messages
-            ].map((message, index) => (
+            ].filter(m => m.role !== 'tool').map((message, index) => (
                 <li key={index} className={`pb-2 flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                   <ChatBubble message={message} theme={theme} />
                 </li>

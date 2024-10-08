@@ -34,11 +34,11 @@ export class Task {
           }),
         getPromptPrefixMessages: () => [
           {
-            role: "user",
+            role: "system",
             content: `Actual Current Time:${currentTime}\nActual Current Date:${currentDate}`,
           },
           {
-            role: "user",
+            role: "system",
             content:
               `I want you to act like a loseq task generator. You take the input and output one or more logseq tasks. Please do not refer to yourself AND do not forget to add the   (non-breaking space) unicode charecter before the SCHEDULED tag.
                     Logseq Tasks have the following format:

@@ -14,7 +14,7 @@ export const addSettingsToLogseq = async () => {
       type: "string",
       title: "LLM Model",
       description: "Set your desired model to use ollama",
-      default: "llama3.2",
+      default: "mistral-nemo",
     },
     {
       key: "shortcut",

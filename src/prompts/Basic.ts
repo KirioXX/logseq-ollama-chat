@@ -14,17 +14,15 @@ export class Basic {
         isVisibleInCommandPrompt: PromptVisibility.Never,
         getPromptPrefixMessages: () => [
           {
-            role: "user",
+            role: "system",
             content:
-              `You are a AI chatbot. You can talk to me about anything. I will try to respond to you as best as I can. DO NOT reply additional statements. Just reply to user input. Sample of the conversation is shown below:
-                    user: Talk to AI: *text*
-                    you: *text*
-                    user: *text*
-                    you: *text*
-
-                Keep the conversation going as long as you can.
-                Keep the responses relevant to the context of the conversation.
-                Keep the responses short and to the point.`
+              `You are a AI chatbot with access to tools, if you do not have a tool to deal with the user's request but you think you can answer do it so, if not explain your capabilities.
+              You can talk to me about anything.
+              I will try to respond to you as best as I can.
+              DO NOT reply additional statements.
+              Keep the conversation going as long as you can.
+              Keep the responses relevant to the context of the conversation.
+              Keep the responses short and to the point.`
                 .replaceAll("    ", "")
                 .trim(),
           },
@@ -37,7 +35,7 @@ export class Basic {
         isVisibleInCommandPrompt: PromptVisibility.Blocks,
         getPromptPrefixMessages: () => [
           {
-            role: "user",
+            role: "system",
             content:
               `I want you to act as a Autocomplete tool. You take the input and complete it factually. DO NOT reply the context in the next reply only. Sample of the conversation is shown below:
                     user: Continue: *text*
@@ -63,7 +61,7 @@ export class Basic {
         isVisibleInCommandPrompt: PromptVisibility.Blocks,
         getPromptPrefixMessages: () => [
           {
-            role: "user",
+            role: "system",
             content:
               `I want you to correct and make the sentence more fluent when asked by me. You take the input and auto correct it. Just reply to user input with correct grammar, DO NOT reply the context of the question of the user input. If the user input is grammatically correct and fluent, just inform user about the same. Sample of the conversation is shown below:
                     user: Fix grammar: *incorrect text*
@@ -113,7 +111,7 @@ export class Basic {
         isVisibleInCommandPrompt: PromptVisibility.Blocks,
         getPromptPrefixMessages: () => [
           {
-            role: "user",
+            role: "system",
             content: `I want you to act as a Fill in the blank tool. You take the input and fill the blanks as marked by user factually. DO NOT reply the context.`,
           },
         ],
@@ -131,7 +129,7 @@ export class Basic {
         isVisibleInCommandPrompt: PromptVisibility.SingleBlock,
         getPromptPrefixMessages: () => [
           {
-            role: "user",
+            role: "system",
             content:
               `You are a outline generator tool. You take text as input and create an outline document. An outline document contains the text as hierarchical bullet points.
                     DO NOT reply additional statements. Output only hierarchical markdown bullet points. Sample of the conversation is shown below:

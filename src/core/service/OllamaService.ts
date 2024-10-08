@@ -2,6 +2,7 @@ import { LogseqProxy } from "@/logseq/LogseqProxy";
 // import { DBService } from "./DBService";
 import { Message, Ollama } from "ollama/browser";
 import { LogseqPromptInvocationState, Prompt } from "@/types/Prompt";
+import { getTools } from "@/ollama/tools/getTools";
 
 export class OllamaService {
   private static _instance: OllamaService;
@@ -29,7 +30,7 @@ export class OllamaService {
 
   private async _onSettingsChange(newSettings: any, oldSettings: any) {
     if (newSettings.host !== oldSettings.host) {
-      if (!newSettings.host) {
+      if (newSettings.host && newSettings.host !== "") {
         const url = new URL(newSettings.host);
         this.ollamaClient = new Ollama({
           host: `${url.protocol}://${url.host}:${url.port}`,
@@ -60,9 +61,7 @@ export class OllamaService {
     }
 
     const response = await this.ollamaClient.list();
-    const [modelNames, modelVersions] = response.models.map((m) =>
-      m.name.split(":")
-    );
+    const modelNames = response.models.map((m) => m.name.split(":")[0]);
     const isModelAvailable = modelNames.includes(model);
     return isModelAvailable;
   }
@@ -75,7 +74,7 @@ export class OllamaService {
     messsages?: Message[];
     prompt?: Prompt;
     invokeState?: LogseqPromptInvocationState;
-  }): Promise<Message | undefined> {
+  }): Promise<Message[] | undefined> {
     if (!this.ollamaClient || !this.model) {
       throw new Error("Ollama service not initialized");
     }
@@ -84,6 +83,7 @@ export class OllamaService {
     }
 
     const chatMessage: Message[] = [];
+    const responseMessages: Message[] = [];
 
     if (prompt) {
       prompt?.getPromptPrefixMessages?.().forEach((m) => chatMessage.push(m));
@@ -96,20 +96,59 @@ export class OllamaService {
     }
 
     console.log("Chat Message", chatMessage);
-    const chatResponse = await this.ollamaClient?.chat({
+    const tools = getTools();
+    const response = await this.ollamaClient?.chat({
       model: this.model,
       messages: chatMessage,
-      stream: false,
       format: "markdown",
+      tools: tools.map((t) => t.tool),
     });
 
-    if (!chatResponse) {
+    if (!response) {
       logseq.UI.showMsg(
         "Error in Ollama request. Make sure that Ollama service is running and there is no typo in host or model name",
         "error"
       );
       return;
     }
-    return { role: "bot", content: chatResponse.message.content };
+
+    // Check if the model decided to use the provided function
+    if (
+      !response.message.tool_calls ||
+      response.message.tool_calls.length === 0
+    ) {
+      console.log("The model didn't use the function. Its response was:");
+      console.log(response.message.content);
+      return [response.message];
+    }
+
+    // Process function calls made by the model
+    if (response.message.tool_calls) {
+      for (const tool of response.message.tool_calls) {
+        const functionToCall = tools.find(
+          (t) => t.tool.function.name === tool.function.name
+        )?.call;
+        const functionResponse = functionToCall?.(tool.function.arguments);
+        console.log("Function Response", functionResponse);
+        if (!functionResponse) {
+          continue;
+        }
+        // Add function response to the conversation
+        const toolMessage = {
+          role: "tool",
+          content: functionResponse,
+        };
+        chatMessage.push(toolMessage);
+        responseMessages.push(toolMessage);
+      }
+    }
+    // Second API call: Get final response from the model
+    const finalResponse = await this.ollamaClient.chat({
+      model: this.model,
+      messages: chatMessage,
+      format: "markdown",
+      tools: tools.map((t) => t.tool),
+    });
+    return [...responseMessages, finalResponse.message];
   }
 }

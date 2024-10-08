@@ -17,7 +17,7 @@ export class Flashcard {
           }),
         getPromptPrefixMessages: () => [
           {
-            role: "user",
+            role: "system",
             content: `
                     I want you to act like a professional anki card maker. You take the input and create anki cards (flashcards) from it. DO NOT refer to yourself. Keep the flashcards simple, clear and focused on most important information. Use minimum information principle of anki.
                     Ensure that you output the flashcards as markdown list (with spacing maintained and '#card' at end of question) as shown in examples.
