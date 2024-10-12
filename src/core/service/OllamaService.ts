@@ -41,7 +41,7 @@ export class OllamaService {
     }
 
     if (newSettings.model !== oldSettings.model) {
-      const isModelAvailable = await OllamaService._instance._isModelAvailable(
+      const isModelAvailable = await OllamaService._instance.isModelAvailable(
         newSettings.model
       );
       if (isModelAvailable) {
@@ -55,7 +55,7 @@ export class OllamaService {
     }
   }
 
-  private async _isModelAvailable(model: string) {
+  public async isModelAvailable(model: string) {
     if (!this.ollamaClient) {
       throw new Error("Ollama service not initialized");
     }
@@ -66,7 +66,7 @@ export class OllamaService {
     return isModelAvailable;
   }
 
-  async chat({
+  public async chat({
     messsages,
     prompt,
     invokeState,
@@ -124,11 +124,14 @@ export class OllamaService {
 
     // Process function calls made by the model
     if (response.message.tool_calls) {
+      console.log("Function Calls", response.message.tool_calls);
       for (const tool of response.message.tool_calls) {
         const functionToCall = tools.find(
           (t) => t.tool.function.name === tool.function.name
         )?.call;
-        const functionResponse = functionToCall?.(tool.function.arguments);
+        const functionResponse = await functionToCall?.(
+          tool.function.arguments
+        );
         console.log("Function Response", functionResponse);
         if (!functionResponse) {
           continue;
@@ -150,5 +153,34 @@ export class OllamaService {
       tools: tools.map((t) => t.tool),
     });
     return [...responseMessages, finalResponse.message];
+  }
+
+  public async installModel(model: string) {
+    if (!this.ollamaClient) {
+      throw new Error("Ollama service not initialized");
+    }
+
+    console.log("Installing model", model);
+    const stream = await this.ollamaClient.pull({ model, stream: true });
+    let currentDigestDone = false;
+    for await (const part of stream) {
+      if (part.digest) {
+        let percent = 0;
+        if (part.completed && part.total) {
+          percent = Math.round((part.completed / part.total) * 100);
+        }
+        process.stdout.clearLine(0); // Clear the current line
+        process.stdout.cursorTo(0); // Move cursor to the beginning of the line
+        process.stdout.write(`${part.status} ${percent}%...`); // Write the new text
+        if (percent === 100 && !currentDigestDone) {
+          console.log(); // Output to a new line
+          currentDigestDone = true;
+        } else {
+          currentDigestDone = false;
+        }
+      } else {
+        console.log(part.status);
+      }
+    }
   }
 }

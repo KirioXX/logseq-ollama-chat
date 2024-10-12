@@ -11,6 +11,8 @@ import { ContextMenu } from "./ContextMenu";
 import { DBService } from "./core/service/DBService";
 import { LogseqProxy } from "./logseq/LogseqProxy";
 import { OllamaService } from "./core/service/OllamaService";
+import embedingFromJson from "./ollama/embeding/embedingFromJson";
+import { DocumentService } from "./core/service/DocumentService";
 
 const pluginId = PL.id;
 
@@ -47,16 +49,24 @@ async function main() {
     ContextMenu.init();
     LogseqProxy.init();
     const database = DBService.Instance;
-    await database.init();
+    await database.init().then(() => {
+      console.log(`${PL.id}: Database initialized`);
+    })
     const ollamaService = OllamaService.Instance;
-    await ollamaService.init();
+    await ollamaService.init().then(() => {
+      console.log(`${PL.id}: OllamaService initialized`);
+    });
+    const documentService = DocumentService.Instance;
+    await documentService.init().then(() => {
+      console.log(`${PL.id}: DocumentService initialized`);
+    });
 
     // Add menu item with action
     logseq.provideModel({
-      showOllama: async () => toggleOllamaUI(),
+      showOllama: async () => embedingFromJson({}),
     });
     logseq.App.registerUIItem("toolbar", {
-      key: "ollama-ui-open",
+      key: `${pluginId}-ui-open`,
       template: `
         <a data-on-click="showOllama"
            class="button">
@@ -71,6 +81,12 @@ async function main() {
       logseq?.settings?.shortcut as string ?? 'mod+shift+o',
       () => toggleOllamaUI()
     );
+    // logseq.App.registerCommandShortcut(
+    //   'mod+shift+i',
+    //   async () => {
+    //     console.table(await documentService.search("Tom Darlow"));
+    //   }
+    // );
 
     // Register App UI
     const root = ReactDOM.createRoot(document.getElementById("app")!);

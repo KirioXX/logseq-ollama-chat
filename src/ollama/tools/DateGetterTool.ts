@@ -23,7 +23,7 @@ export class DateGetterTool {
     },
   };
 
-  public static call(...args: any[]): string {
+  public static async call(...args: any[]): Promise<string> {
     return JSON.stringify({ date: moment().format("YYYY-MM-DD") });
   }
 }
