@@ -2,7 +2,8 @@ import { Prompt, PromptVisibility } from "../types/Prompt";
 import moment from "moment";
 import Mustache from "mustache";
 import _ from "lodash";
-import { LogseqPromptInvocationState } from "@/types /Prompt";
+import { LogseqPromptInvocationState } from "@/types/Prompt";
+import { SystemMessage } from "@langchain/core/messages";
 
 export class Task {
   public static async getPrompts(): Promise<Prompt[]> {
@@ -33,45 +34,42 @@ export class Task {
               .join("\n"),
           }),
         getPromptPrefixMessages: () => [
-          {
-            role: "system",
-            content: `Actual Current Time:${currentTime}\nActual Current Date:${currentDate}`,
-          },
-          {
-            role: "system",
-            content:
-              `I want you to act like a loseq task generator. You take the input and output one or more logseq tasks. Please do not refer to yourself AND do not forget to add the   (non-breaking space) unicode charecter before the SCHEDULED tag.
-                    Logseq Tasks have the following format:
-                    - {${later}|${now}} Task Title
-                       SCHEDULED: <[Start Date] [Weekday] [Start Time] [.Repeater]>
-                    ____
-                    _user_
-                    Generate Tasks:
-                    Robert wants to meet up with me today but I have plans to study from ${currentTimeAlt} and then go to bowling with Mark at ${currentTimePlus2HoursAlt} pm.
-                    _you_
-                    - ${now} study
-                       SCHEDULED: <${currentDate} ${weekdayCurrentDate} ${currentTime}>
-                    - ${later} bowling with Mark
-                       SCHEDULED: <${currentDate} ${weekdayCurrentDate} ${currentTimePlus2Hours}>
-                    ____
-                    _user_
-                    Generate Tasks:
-                    Please remind me to brush teeth every morning.
-                    _you_
-                    - ${later} brush teeth
-                       SCHEDULED: <${currentDate} ${weekdayCurrentDate} 08:00 .+1d>
-                    ____
-                    _user_
-                    Generate Tasks:
-                    I want to brush teeth right now.
-                    _you_
-                    - ${now} brush teeth
-                       SCHEDULED: <${currentDate} ${weekdayCurrentDate} ${currentTime}>
-                    ____
-            `
-                .replaceAll("                    ", "")
-                .trim(),
-          },
+          new SystemMessage(
+            `Actual Current Time:${currentTime}\nActual Current Date:${currentDate}`
+          ),
+          new SystemMessage(
+            `I want you to act like a loseq task generator. You take the input and output one or more logseq tasks. Please do not refer to yourself AND do not forget to add the   (non-breaking space) unicode charecter before the SCHEDULED tag.
+                  Logseq Tasks have the following format:
+                  - {${later}|${now}} Task Title
+                     SCHEDULED: <[Start Date] [Weekday] [Start Time] [.Repeater]>
+                  ____
+                  _user_
+                  Generate Tasks:
+                  Robert wants to meet up with me today but I have plans to study from ${currentTimeAlt} and then go to bowling with Mark at ${currentTimePlus2HoursAlt} pm.
+                  _you_
+                  - ${now} study
+                     SCHEDULED: <${currentDate} ${weekdayCurrentDate} ${currentTime}>
+                  - ${later} bowling with Mark
+                     SCHEDULED: <${currentDate} ${weekdayCurrentDate} ${currentTimePlus2Hours}>
+                  ____
+                  _user_
+                  Generate Tasks:
+                  Please remind me to brush teeth every morning.
+                  _you_
+                  - ${later} brush teeth
+                     SCHEDULED: <${currentDate} ${weekdayCurrentDate} 08:00 .+1d>
+                  ____
+                  _user_
+                  Generate Tasks:
+                  I want to brush teeth right now.
+                  _you_
+                  - ${now} brush teeth
+                     SCHEDULED: <${currentDate} ${weekdayCurrentDate} ${currentTime}>
+                  ____
+          `
+              .replaceAll("                    ", "")
+              .trim()
+          ),
         ],
         group: "task",
       },

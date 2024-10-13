@@ -33,9 +33,9 @@ export class DocumentService {
     }
   }
 
-  public async search(query: string) {
+  public async search(query: string, limit?: number) {
     const queryVector = await embeddingFromJson({ text: query });
-    const docs = await this.db?.vectorSearchIndexSimilarity(queryVector);
+    const docs = await this.db?.vectorSearchIndexSimilarity(queryVector, limit);
     const documentIds = docs?.result.map(({ doc }) => doc.get("id"));
     const allDocs = await logseq.Editor.getAllPages();
     return allDocs?.filter((doc) => documentIds?.includes(doc.id));

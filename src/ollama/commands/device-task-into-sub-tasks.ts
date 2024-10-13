@@ -1,7 +1,7 @@
 import { BlockUUID, IHookEvent } from "@logseq/libs/dist/LSPlugin";
 import { Prompt } from "@/types/Prompt";
-import { OllamaService } from "@/core/service/OllamaService";
 import { getAllPrompts } from "@/prompts/getAllPrompts";
+import { LangGraphService } from "@/core/service/LangchainService";
 
 export async function DivideTaskIntoSubTasks(uuid: string, prompt: Prompt) {
   try {
@@ -11,7 +11,7 @@ export async function DivideTaskIntoSubTasks(uuid: string, prompt: Prompt) {
       { before: false }
     );
     let i = 0;
-    const response = await OllamaService.Instance?.chat({
+    const response = await LangGraphService.Instance?.chat({
       prompt,
     });
 
@@ -19,7 +19,7 @@ export async function DivideTaskIntoSubTasks(uuid: string, prompt: Prompt) {
       return;
     }
 
-    for (const todo of response.content.split("\n")) {
+    for (const todo of response.content.toString().split("\n")) {
       if (i == 0) {
         await logseq.Editor.updateBlock(block!.uuid, `TODO ${todo.slice(3)} `);
       } else {

@@ -1,11 +1,5 @@
-import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
 import { LSPluginUserEvents } from "@logseq/libs/dist/LSPlugin.user";
 import React from "react";
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
 
 let _visible = logseq.isMainUIVisible;
 

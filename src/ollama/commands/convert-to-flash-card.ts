@@ -1,7 +1,7 @@
 import { BlockUUID, IHookEvent } from "@logseq/libs/dist/LSPlugin";
 import { Prompt } from "@/types/Prompt";
 import { getAllPrompts } from "@/prompts/getAllPrompts";
-import { OllamaService } from "@/core/service/OllamaService";
+import { LangGraphService } from "@/core/service/LangchainService";
 
 export async function convertToFlashCard(uuid: string, prompt: Prompt) {
   try {
@@ -10,13 +10,16 @@ export async function convertToFlashCard(uuid: string, prompt: Prompt) {
       "⌛Genearting question....",
       { before: false }
     );
-    const respond = await OllamaService.Instance?.chat({
+    const respond = await LangGraphService.Instance?.chat({
       prompt,
     });
     if (!respond) {
       return;
     }
-    await logseq.Editor.updateBlock(answerBlock!.uuid, respond.content);
+    await logseq.Editor.updateBlock(
+      answerBlock!.uuid,
+      respond.content.toString()
+    );
   } catch (e: any) {
     logseq.UI.showMsg(e.toString(), "warning");
     console.error(e);

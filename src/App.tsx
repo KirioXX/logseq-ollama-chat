@@ -1,20 +1,21 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useAppVisible } from "./lib/utils";
+import { useAppVisible } from "./utils";
 import { ChatInput } from "./components/ChatInput";
-import { Message } from "ollama/browser";
 import { ChatBubble } from "./components/ChatBubble";
-import { OllamaService } from "./core/service/OllamaService";
 import { Basic } from "./prompts/Basic";
+import { HumanMessage, AIMessage } from "@langchain/core/messages";
+import { LangGraphService } from "./core/service/LangchainService";
 
 function App() {
   const scrollableRef = useRef(null);
+  const chatInputRef = useRef<HTMLTextAreaElement>(null);
   const visible = useAppVisible();
   const [theme, setTheme] = useState<string>('')
   const welcomeMessages = [
-    { role: 'assistant', content: 'Hello!' },
-    { role: 'assistant', content: 'How can I help you today?' },
+    new AIMessage('Hello!'),
+    new AIMessage('How can I help you today?')
   ]
-  const [messages, setMessages] = useState<Message[]>([])
+  const [messages, setMessages] = useState<(HumanMessage | AIMessage)[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const getTheme = async () => {
@@ -60,23 +61,23 @@ function App() {
   useEffect(() => {
     const handleMessages = async () => {
       const lastMessage = messages[messages.length - 1]
-      if (lastMessage.role === 'user') {
+      if (lastMessage.getType() === 'human') {
         const prompt = Basic.getPrompts().find(p => p.id === 'talk-to-ai')
-        const response = await OllamaService.Instance.chat({
-          messsages: messages,
+        const response = await LangGraphService.Instance.chat({
+          messsage: lastMessage,
           prompt
         })
         if(!response) {
           setMessages([
             ...messages,
-            { role: 'assistent', content: 'I am sorry, I could not understand that' }
+            new AIMessage('I am sorry, I could not understand that')
           ])
           setIsSubmitting(false)
           return
         }
         setMessages([
           ...messages,
-          ...response!
+          response!
         ])
         setIsSubmitting(false)
         scrollToBottom()
@@ -96,8 +97,8 @@ function App() {
             [
               ...welcomeMessages,
               ...messages
-            ].filter(m => m.role !== 'tool').map((message, index) => (
-                <li key={index} className={`pb-2 flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+            ].map((message, index) => (
+                <li key={index} className={`pb-2 flex ${message.getType() === 'human' ? 'justify-end' : 'justify-start'}`}>
                   <ChatBubble message={message} theme={theme} />
                 </li>
             ))
@@ -116,12 +117,22 @@ function App() {
             setIsSubmitting(true)
             scrollToBottom()
 
-            const userInput = (document.getElementById('chat') as HTMLTextAreaElement).value;
-            setMessages([...messages, { role: 'user', content: userInput }]);
-            (document.getElementById('chat') as HTMLTextAreaElement).value = '';
+            const formData = new FormData(e.currentTarget);
+            const message = formData.get("message") as string;
+
+            if (message.trim() !== "") {
+              setMessages([...messages, new HumanMessage(message)]);
+
+              // Clear the textarea by calling the reset method in ChatInput
+              if (chatInputRef.current) {
+                chatInputRef.current.value = "";
+              }
+
+              e.currentTarget.reset(); // Optionally reset form after submission
+            }
           }
           }>
-            <ChatInput/>
+            <ChatInput inputRef={chatInputRef}/>
           </form>
       </div>
     );

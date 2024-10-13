@@ -1,5 +1,5 @@
+import { LangGraphService } from "@/core/service/LangchainService";
 import { getAllPrompts } from "@/prompts/getAllPrompts";
-import { OllamaService } from "@/core/service/OllamaService";
 import { BlockUUID, IHookEvent } from "@logseq/libs/dist/LSPlugin";
 
 export async function summarizeBlock(prop: IHookEvent & { uuid: BlockUUID }) {
@@ -26,9 +26,9 @@ export async function summarizeBlock(prop: IHookEvent & { uuid: BlockUUID }) {
       logseq.UI.showMsg("Couldn't insert block", "error");
       return;
     }
-    const summary = await OllamaService.Instance.chat({
+    const summary = await LangGraphService.Instance.chat({
       prompt,
-      invokeState: { selectedBlocks: [summaryBlock] },
+      // invokeState: { selectedBlocks: [summaryBlock] },
     });
 
     await logseq.Editor.updateBlock(summaryBlock!.uuid, `Summary: ${summary}`);

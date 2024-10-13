@@ -98,7 +98,10 @@ export class DBService {
     return (nr * 10 + "").slice(0, 10).padEnd(10, "0");
   }
 
-  public async vectorSearchIndexSimilarity(searchEmbedding: number[]) {
+  public async vectorSearchIndexSimilarity(
+    searchEmbedding: number[],
+    limit = 5
+  ) {
     if (!this.db) {
       throw new Error("DB service not initialized");
     }
@@ -107,7 +110,7 @@ export class DBService {
     const candidates = new Set<RxDocument>();
     let docReads = 0;
     await Promise.all(
-      new Array(5).fill(0).map(async (_, i) => {
+      new Array(limit).fill(0).map(async (_, i) => {
         const distanceToIndex = euclideanDistance(
           INDEX_VECTORS[i],
           searchEmbedding

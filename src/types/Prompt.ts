@@ -1,8 +1,7 @@
+import { SystemMessage, HumanMessage } from "@langchain/core/messages";
 import { BlockEntity } from "@logseq/libs/dist/LSPlugin";
-import { Message } from "ollama/browser";
 
 type PromptGroup = "auto-complete" | "basic" | "flashcard" | "task";
-
 /**
  * Prompts work in two phases:
  * - Phase 1: Prompt is displayed to used in command prompt and upon selection,
@@ -17,8 +16,6 @@ export type Prompt = {
   isVisibleInCommandPrompt?: (
     invokeState?: LogseqPromptInvocationState
   ) => boolean;
-  // TODO: Setup tooling for ollama
-  // tools? : Tool[]; // An option array of Tools that can be used by the prompt. Please avoid unless needed as it changes executor from simple call to agent call.
   getPromptMessage?: (
     input?: string,
     invokeState?: LogseqPromptInvocationState
@@ -26,8 +23,8 @@ export type Prompt = {
   group: PromptGroup; // A misc string that represents the group to which the prompt belongs
 
   // -- Fields for Phase 2 --
-  getPromptPrefixMessages?: () => Message[]; // Hidden messages that are prepended to the message history when the prompt is run
-  getPromptSuffixMessages?: () => Message[]; // Hidden message that is appended to the prompt message
+  getPromptPrefixMessages?: () => Array<SystemMessage | HumanMessage>; // Hidden messages that are prepended to the message history when the prompt is run
+  getPromptSuffixMessages?: () => Array<SystemMessage | HumanMessage>; // Hidden message that is appended to the prompt message
 };
 
 export type LogseqPromptInvocationState = {

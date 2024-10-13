@@ -1,6 +1,7 @@
 import { LogseqPromptInvocationState } from "@/types /Prompt";
 import { Prompt, PromptVisibility } from "../types/Prompt";
 import Mustache from "mustache";
+import { SystemMessage } from "@langchain/core/messages";
 
 export class Flashcard {
   public static getPrompts(): Prompt[] {
@@ -16,9 +17,8 @@ export class Flashcard {
               .join("\n"),
           }),
         getPromptPrefixMessages: () => [
-          {
-            role: "system",
-            content: `
+          new SystemMessage(
+            `
                     I want you to act like a professional anki card maker. You take the input and create anki cards (flashcards) from it. DO NOT refer to yourself. Keep the flashcards simple, clear and focused on most important information. Use minimum information principle of anki.
                     Ensure that you output the flashcards as markdown list (with spacing maintained and '#card' at end of question) as shown in examples.
                     Sample examples are given bellow (each example is seperated by '____')
@@ -57,8 +57,8 @@ export class Flashcard {
                     ____
             `
               .replaceAll("                    ", "")
-              .trim(),
-          },
+              .trim()
+          ),
         ],
         group: "flashcard",
       },

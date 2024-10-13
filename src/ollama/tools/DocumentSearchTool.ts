@@ -15,6 +15,10 @@ export class DocumentSearchTool {
             type: "string",
             description: "The search query",
           },
+          limit: {
+            type: "number",
+            description: "The maximum number of results to return",
+          },
         },
         required: ["query"],
       },
@@ -24,8 +28,9 @@ export class DocumentSearchTool {
   // TODO: Sanitize the data before returning it
   public static async call(...args: any[]): Promise<string> {
     const { query } = args[0];
-    console.log("DocumentSearchTool", query);
-    const results = await DocumentService.Instance.search(query);
+    console.log("DocumentSearchTool", { query });
+    const results = await DocumentService.Instance.search(query, 3);
+    console.log("DocumentSearchTool", { results });
     return JSON.stringify(results);
   }
 }
