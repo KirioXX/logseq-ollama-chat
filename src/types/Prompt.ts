@@ -16,10 +16,6 @@ export type Prompt = {
   isVisibleInCommandPrompt?: (
     invokeState?: LogseqPromptInvocationState
   ) => boolean;
-  getPromptMessage?: (
-    input?: string,
-    invokeState?: LogseqPromptInvocationState
-  ) => string; // The return value of the function is appended when chatgpt page is created.
   group: PromptGroup; // A misc string that represents the group to which the prompt belongs
 
   // -- Fields for Phase 2 --

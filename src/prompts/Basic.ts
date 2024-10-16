@@ -46,12 +46,6 @@ export class Basic {
               .trim()
           ),
         ],
-        getPromptMessage: (_, invokeState?: LogseqPromptInvocationState) =>
-          Mustache.render(`Continue:\n{{selectedBlocksList}}`, {
-            selectedBlocksList: invokeState?.selectedBlocks
-              ?.map((b: any) => `{{embed ((${b.uuid}))}}`)
-              .join("\n"),
-          }),
         group: "auto-complete",
       },
       {
@@ -70,36 +64,36 @@ export class Basic {
               .trim()
           ),
         ],
-        getPromptMessage: (_, invokeState?: LogseqPromptInvocationState) =>
-          Mustache.render(`Fix grammar:\n{{selectedBlocksList}}`, {
-            selectedBlocksList: invokeState?.selectedBlocks
-              ?.map((b: any) => `{{embed ((${b.uuid}))}}`)
-              .join("\n"),
-          }),
         group: "basic",
       },
       {
         id: "summarize",
         name: "Summarize (Shorten)",
         isVisibleInCommandPrompt: PromptVisibility.Blocks,
-        getPromptMessage: (_, invokeState?: LogseqPromptInvocationState) =>
-          Mustache.render(`Summarize (Shorten):\n{{selectedBlocksList}}`, {
-            selectedBlocksList: invokeState?.selectedBlocks
-              ?.map((b: any) => `{{embed ((${b.uuid}))}}`)
-              .join("\n"),
-          }),
+        getPromptPrefixMessages: () => [
+          new SystemMessage(
+            `I want you to act as a Summarizer tool. You take the input and summarize it factually. DO NOT reply the context. Output only the summary. Sample of the conversation is shown below:
+                  user: Summarize: Pokémon is a series of video games developed by Game Freak and published by Nintendo and The Pokémon Company under the Pokémon media franchise.
+                  you: Pokémon is a series of video games developed by Game Freak and published by Nintendo and The Pokémon Company under the Pokémon media franchise.`
+              .replaceAll("    ", "")
+              .trim()
+          ),
+        ],
         group: "basic",
       },
       {
         id: "elaborate",
         name: "Elaborate (Expand)",
         isVisibleInCommandPrompt: PromptVisibility.Blocks,
-        getPromptMessage: (_, invokeState?: LogseqPromptInvocationState) =>
-          Mustache.render(`Elaborate (Expand):\n{{selectedBlocksList}}`, {
-            selectedBlocksList: invokeState?.selectedBlocks
-              ?.map((b: any) => `{{embed ((${b.uuid}))}}`)
-              .join("\n"),
-          }),
+        getPromptPrefixMessages: () => [
+          new SystemMessage(
+            `I want you to act as a Elaborator tool. You take the input and elaborate it factually. DO NOT reply the context. Sample of the conversation is shown below:
+                  user: Elaborate: Pokémon is a series of video games developed by Game Freak and published by Nintendo and The Pokémon Company under the Pokémon media franchise.
+                  you: Pokémon is a series of video games developed by Game Freak and published by Nintendo and The Pokémon Company under the Pokémon media franchise.`
+              .replaceAll("    ", "")
+              .trim()
+          ),
+        ],
         group: "basic",
       },
       {
@@ -111,12 +105,6 @@ export class Basic {
             `I want you to act as a Fill in the blank tool. You take the input and fill the blanks as marked by user factually. DO NOT reply the context.`
           ),
         ],
-        getPromptMessage: (_, invokeState?: LogseqPromptInvocationState) =>
-          Mustache.render(`Fill in the Blank:\n{{selectedBlocksList}}`, {
-            selectedBlocksList: invokeState?.selectedBlocks?.map(
-              (b: any) => `\n{{embed ((${b.uuid}))}}`
-            ),
-          }),
         group: "basic",
       },
       {
@@ -138,12 +126,6 @@ export class Basic {
               .trim()
           ),
         ],
-        getPromptMessage: (_, invokeState?: LogseqPromptInvocationState) =>
-          Mustache.render(`Fill in the Blank:\n{{selectedBlocksList}}`, {
-            selectedBlocksList: invokeState?.selectedBlocks?.map(
-              (b: any) => `\n{{embed ((${b.uuid}))}}`
-            ),
-          }),
         group: "basic",
       },
     ];

@@ -27,12 +27,6 @@ export class Task {
         id: "generate-tasks",
         name: "Generate Logseq Tasks",
         isVisibleInCommandPrompt: PromptVisibility.Blocks,
-        getPromptMessage: (_, invokeState?: LogseqPromptInvocationState) =>
-          Mustache.render(`Generate Task(s):\n{{selectedBlocksList}}`, {
-            selectedBlocksList: invokeState?.selectedBlocks
-              ?.map((b: any) => `{{embed ((${b.uuid}))}}`)
-              .join("\n"),
-          }),
         getPromptPrefixMessages: () => [
           new SystemMessage(
             `Actual Current Time:${currentTime}\nActual Current Date:${currentDate}`

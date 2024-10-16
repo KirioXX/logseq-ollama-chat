@@ -1,9 +1,9 @@
 import { LangGraphService } from "@/core/service/LangchainService";
 import { getAllPrompts } from "@/prompts/getAllPrompts";
 import { HumanMessage } from "@langchain/core/messages";
-import { BlockUUID, IHookEvent } from "@logseq/libs/dist/LSPlugin";
+import { IHookEvent, BlockUUID } from "@logseq/libs/dist/LSPlugin";
 
-export async function summarizeBlock(prop?: IHookEvent & { uuid: BlockUUID }) {
+export async function elaborateBlock(prop?: IHookEvent & { uuid: BlockUUID }) {
   try {
     let currentBlock;
     if (prop) {
@@ -20,31 +20,32 @@ export async function summarizeBlock(prop?: IHookEvent & { uuid: BlockUUID }) {
       return;
     }
 
-    // Get the prompt with the id "summarize"
-    const prompt = (await getAllPrompts()).find((p) => p.id === "summarize");
+    // Get the prompt with the id "elaborate"
+    const prompt = (await getAllPrompts()).find((p) => p.id === "elaborate");
     if (!prompt) {
       logseq.UI.showMsg("No prompt found", "error");
       return;
     }
 
-    const summaryBlock = await logseq.Editor.insertBlock(
+    const expandBlock = await logseq.Editor.insertBlock(
       currentBlock!.uuid,
-      `⌛Summarizing Block...`,
+      `⌛Expanding Block...`,
       { before: false }
     );
-    if (!summaryBlock) {
+    if (!expandBlock) {
       logseq.UI.showMsg("Couldn't insert block", "error");
       return;
     }
-    const summary = await LangGraphService.Instance.chat({
-      messsage: new HumanMessage(`Summarize: ${currentBlock.content}`),
+
+    const expand = await LangGraphService.Instance.chat({
+      messsage: new HumanMessage(`Elaborate: ${currentBlock.content}`),
       prompt,
     });
 
     await logseq.Editor.updateBlock(
-      summaryBlock!.uuid,
-      `Summary:
-${summary?.content}`
+      expandBlock!.uuid,
+      `Elaborate:
+${expand?.content}`
     );
   } catch (e: any) {
     logseq.UI.showMsg(e.toString(), "warning");

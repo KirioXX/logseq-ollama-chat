@@ -111,7 +111,7 @@ export class LangGraphService {
     messsage,
     prompt,
   }: {
-    messsage?: HumanMessage;
+    messsage: HumanMessage;
     prompt?: Prompt;
   }): Promise<AIMessage | undefined> {
     if (!this._agent) {

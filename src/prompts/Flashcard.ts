@@ -1,4 +1,3 @@
-import { LogseqPromptInvocationState } from "@/types /Prompt";
 import { Prompt, PromptVisibility } from "../types/Prompt";
 import Mustache from "mustache";
 import { SystemMessage } from "@langchain/core/messages";
@@ -10,12 +9,6 @@ export class Flashcard {
         id: "generate-flashcard",
         name: "Generate flashcard(s)",
         isVisibleInCommandPrompt: PromptVisibility.Blocks,
-        getPromptMessage: (_, invokeState?: LogseqPromptInvocationState) =>
-          Mustache.render(`Generate flashcard(s):\n{{selectedBlocksList}}`, {
-            selectedBlocksList: invokeState?.selectedBlocks
-              ?.map((b: any) => `{{embed ((${b.uuid}))}}`)
-              .join("\n"),
-          }),
         getPromptPrefixMessages: () => [
           new SystemMessage(
             `

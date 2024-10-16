@@ -5,6 +5,9 @@ import { ChatBubble } from "./components/ChatBubble";
 import { Basic } from "./prompts/Basic";
 import { HumanMessage, AIMessage } from "@langchain/core/messages";
 import { LangGraphService } from "./core/service/LangchainService";
+import { Button } from "./components/Button";
+import { summarizeBlock } from "./ollama/commands/summarize-block";
+import { elaborateBlock } from "./ollama/commands/elaborate-block";
 
 function App() {
   const scrollableRef = useRef(null);
@@ -112,6 +115,18 @@ function App() {
           }
         </ul>
         {/* Chat input */}
+        <ul className="flex">
+          <li>
+            <Button onClick={() => summarizeBlock()}>
+              Summarize Block
+            </Button>
+          </li>
+          <li>
+            <Button onClick={() => elaborateBlock()}>
+              Elaborate Block
+            </Button>
+          </li>
+        </ul>
           <form onSubmit={(e: any) => {
             e.preventDefault()
             setIsSubmitting(true)
