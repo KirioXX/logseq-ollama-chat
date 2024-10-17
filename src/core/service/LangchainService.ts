@@ -51,7 +51,9 @@ export class LangGraphService {
     if (this._initialized) {
       return;
     }
-    LogseqProxy.Settings.registerSettingsChangeListener(this._onSettingsChange);
+    LogseqProxy.Settings.registerSettingsChangeListener(
+      this._onSettingsChange.bind(this)
+    );
     const settings = logseq.settings;
     this._onSettingsChange(settings, {});
     this._initialized = true;
