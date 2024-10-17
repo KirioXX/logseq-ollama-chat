@@ -15,8 +15,9 @@ function App() {
   const visible = useAppVisible();
   const [theme, setTheme] = useState<string>('')
   const welcomeMessages = [
-    new AIMessage('Hello!'),
-    new AIMessage('How can I help you today?')
+    new AIMessage(`**Hello!**
+
+    How can I help you today?`)
   ]
   const [messages, setMessages] = useState<(HumanMessage | AIMessage)[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)

@@ -54,6 +54,6 @@
   },
   "logseq": {
     "id": "logseq-ollama-chat",
-    "icon": "app_icon.png"
+    "icon": "assets/app_icon.png"
   }
 }
