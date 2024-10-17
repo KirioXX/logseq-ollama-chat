@@ -30,6 +30,7 @@ export const addSettingsToLogseq = async () => {
         "mistral",
         "mixtral",
         "nemotron-mini",
+        "nemotron",
         "qwen2.5-coder",
         "qwen2.5",
         "qwen2",
