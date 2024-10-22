@@ -20,6 +20,8 @@ export const addSettingsToLogseq = async () => {
         "command-r-plus",
         "command-r",
         "firefunction-v2",
+        "granite3-dense",
+        "granite3-moe",
         "hermes3",
         "llama3-groq-tool-use",
         "llama3.1",
